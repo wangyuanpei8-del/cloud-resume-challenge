@@ -33,19 +33,22 @@ A serverless resume website built on AWS as part of the [Cloud Resume Challenge]
 - **アトミックカウンター**：読み取り→加算→書き込みではなく、DynamoDB の `ADD` 式で競合を防止
 - **CORS の限定**：API はこのサイトのオリジンからの `GET` のみ許可
 - **日英バイリンガル**：ページ右上で日本語 / English を切り替え
+- **CI/CD**：`frontend/` を変更して push すると、GitHub Actions が S3 へ同期し CloudFront のキャッシュを無効化
+- **デプロイ用 IAM ユーザーも最小権限**：本来は OIDC を使いたかったが、アカウントの SCP で ID プロバイダーの作成が禁止されているため、対象バケットへの書き込みと対象ディストリビューションの無効化のみを許可したアクセスキーを GitHub Secrets に保存
 
 ## ディレクトリ構成 / Structure
 
 ```
-frontend/   サイトのファイル（S3 にアップロード）
-backend/    Lambda 関数のコード
+frontend/              サイトのファイル（S3 にアップロード）
+backend/               Lambda 関数のコード
+.github/workflows/     GitHub Actions（自動デプロイ）
 ```
 
 ## 今後の予定 / Roadmap
 
 - [x] S3 + CloudFront で静的サイトを公開
 - [x] API Gateway + Lambda + DynamoDB で訪問者カウンター
-- [ ] GitHub Actions による自動デプロイ（CI/CD）
+- [x] GitHub Actions による自動デプロイ（CI/CD）
 - [ ] Terraform によるインフラのコード化（IaC）
 - [ ] Lambda のユニットテスト（pytest）
 - [ ] 独自ドメイン
