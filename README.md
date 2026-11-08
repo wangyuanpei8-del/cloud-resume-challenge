@@ -34,6 +34,7 @@ A serverless resume website built on AWS as part of the [Cloud Resume Challenge]
 - **CORS の限定**：API はこのサイトのオリジンからの `GET` のみ許可
 - **日英バイリンガル**：ページ右上で日本語 / English を切り替え
 - **CI/CD**：`frontend/` を変更して push すると、GitHub Actions が S3 へ同期し CloudFront のキャッシュを無効化
+- **テスト → デプロイ**：`backend/` を変更して push すると、pytest + moto（DynamoDB をモック）でユニットテストを実行し、全て成功した場合のみ Lambda のコードを更新
 - **デプロイ用 IAM ユーザーも最小権限**：本来は OIDC を使いたかったが、アカウントの SCP で ID プロバイダーの作成が禁止されているため、対象バケットへの書き込みと対象ディストリビューションの無効化のみを許可したアクセスキーを GitHub Secrets に保存
 
 ## ディレクトリ構成 / Structure
@@ -41,6 +42,7 @@ A serverless resume website built on AWS as part of the [Cloud Resume Challenge]
 ```
 frontend/              サイトのファイル（S3 にアップロード）
 backend/               Lambda 関数のコード
+backend/tests/         ユニットテスト（pytest + moto）
 .github/workflows/     GitHub Actions（自動デプロイ）
 ```
 
@@ -50,6 +52,6 @@ backend/               Lambda 関数のコード
 - [x] API Gateway + Lambda + DynamoDB で訪問者カウンター
 - [x] GitHub Actions による自動デプロイ（CI/CD）
 - [ ] Terraform によるインフラのコード化（IaC）
-- [ ] Lambda のユニットテスト（pytest）
+- [x] Lambda のユニットテスト（pytest + moto）と自動デプロイ
 - [ ] 独自ドメイン
 - [ ] Qiita に構築記録を投稿
