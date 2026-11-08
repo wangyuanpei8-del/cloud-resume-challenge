@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wang Yuanpei | Cloud Infrastructure Engineer (AWS)</title>
+  <meta name="description" content="Resume of Wang Yuanpei, an IT operations engineer in Tokyo building a career in AWS cloud infrastructure.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Pixelify+Sans:wght@500&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <nav class="lang-switch"><a href="index.html" hreflang="ja">日本語</a> | <span class="current">English</span></nav>
+      <p class="hero-label">&gt; RESUME</p>
+      <h1>Wang Yuanpei <span class="name-en">王 源培</span></h1>
+      <p class="hero-title">IT Operations Engineer → AWS Cloud Infrastructure Engineer</p>
+      <p class="hero-meta">Based in Tokyo / Japanese (JLPT N1) · Chinese (native) · English (TOEIC 775)</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Summary</h2>
+      <p>
+        IT operations engineer with about 2.5 years of hands-on experience in server operations and incident response.
+        Across on-premises (Windows Server / VMware), Linux, and AWS environments, I have handled the full operations cycle:
+        detecting issues through monitoring, isolating root causes, restoring service, reporting to stakeholders,
+        and preventing recurrence by writing runbooks.
+      </p>
+      <p>
+        I am currently studying for the AWS Certified Solutions Architect – Associate exam.
+        My goal is to combine my operations experience with cloud knowledge and grow into a cloud infrastructure engineer
+        who builds, runs, and improves AWS environments.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>Skills</h2>
+      <dl class="skills">
+        <dt>Cloud</dt>
+        <dd>AWS (log analysis of Lambda and API Gateway with CloudWatch Logs)<br>
+            Studying: VPC, EC2, S3, RDS, IAM, CloudWatch</dd>
+        <dt>OS</dt>
+        <dd>Windows Server (~2 years), Linux</dd>
+        <dt>Virtualization</dt>
+        <dd>VMware (~2 years)</dd>
+        <dt>Monitoring</dt>
+        <dd>Zabbix, CloudWatch</dd>
+        <dt>Database</dt>
+        <dd>SQL Server, PostgreSQL (basic)</dd>
+      </dl>
+    </section>
+
+    <section class="card">
+      <h2>Experience</h2>
+
+      <article class="job">
+        <div class="job-head">
+          <h3>System Support Engineer, SaaS company (full-time)</h3>
+          <span class="period">2026.09 – Present</span>
+        </div>
+        <p class="job-summary">Maintenance and first-line incident response for in-house services running on Linux servers and AWS (24/7 shifts)</p>
+        <ul>
+          <li>Triage Zabbix alerts by connecting to Linux servers and checking logs, processes, and disk usage</li>
+          <li>Investigate Lambda and API Gateway log groups in AWS CloudWatch Logs to identify errors</li>
+          <li>Escalate with a clear summary of symptoms, impact, and checks already done, so second-line teams can act immediately</li>
+          <li>Record and manage incident history</li>
+        </ul>
+      </article>
+
+      <article class="job">
+        <div class="job-head">
+          <h3>Systems Engineer, industrial automation company (client-site)</h3>
+          <span class="period">2024.04 – 2026.07</span>
+        </div>
+        <p class="job-summary">Development and dev-environment operations for a SCADA/HMI monitoring system for semiconductor plants (team of 10)</p>
+        <ul>
+          <li>Operated and maintained development servers (Windows Server / VMware) and monitored VM resources</li>
+          <li>Isolated failures using event logs, application logs, configuration, and change history; restored service and reported to stakeholders</li>
+          <li>Analyzed past incidents and standardized troubleshooting steps, <strong>cutting time to root cause by about 50%</strong></li>
+          <li>Wrote operation, incident response, and recovery runbooks to remove dependence on individuals</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card">
+      <h2>Certifications</h2>
+      <ul class="certs">
+        <li><span class="cert-date">2026.12</span>AWS Certified Solutions Architect – Associate<span class="badge">In progress</span></li>
+        <li><span class="cert-date">2024.07</span>IT Passport (Japan national IT exam)</li>
+        <li><span class="cert-date">2023.04</span>TOEIC Listening &amp; Reading 775</li>
+        <li><span class="cert-date">2022.12</span>Japanese-Language Proficiency Test N1</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Education</h2>
+      <ul class="certs">
+        <li><span class="cert-date">2020.06</span>B.Eng. in Water Supply and Drainage Engineering, Henan University of Urban Construction (China)</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>About This Site</h2>
+      <p>
+        This site is part of the <a href="https://cloudresumechallenge.dev/" target="_blank" rel="noopener">Cloud Resume Challenge</a>
+        and runs on AWS (S3, CloudFront, Lambda, API Gateway, DynamoDB).
+      </p>
+      <p class="counter">Visitors: <span id="visitor-count">---</span></p>
+    </section>
+  </main>
+
+  <footer class="container footer">
+    <p>&copy; 2026 Wang Yuanpei</p>
+  </footer>
+  <script src="counter.js" defer></script>
+</body>
+</html>
