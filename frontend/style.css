@@ -202,3 +202,37 @@ html:lang(en) .counter,
 html:lang(en) .lang-switch {
   font-family: "Pixelify Sans", "DotGothic16", monospace;
 }
+
+/* ===== 訪問者カウンター（ヘッダーに目立つように表示） ===== */
+.visitor-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 22px;
+  padding: 10px 18px;
+  background: #11161f;
+  border: 3px solid var(--accent);
+  box-shadow: 5px 5px 0 var(--accent);
+}
+
+.visitor-label {
+  font-family: "DotGothic16", monospace;
+  color: #c9d1dc;
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+.visitor-badge #visitor-count {
+  font-family: "Pixelify Sans", "DotGothic16", monospace;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--accent);
+  background: none;
+  padding: 0;
+  min-width: 3ch;
+  text-shadow: 0 0 8px rgba(255, 153, 0, 0.6);
+}
+
+html:lang(en) .visitor-label {
+  font-family: "Pixelify Sans", "DotGothic16", monospace;
+}
