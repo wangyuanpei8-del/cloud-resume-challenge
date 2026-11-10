@@ -4,7 +4,6 @@
 
 運用保守・障害対応の経験を、AWSの構築・自動化へつなげるための個人プロジェクトです。
 生成AIを学習支援として活用し、AWSの設定・実装・デプロイを自分で行っています。
-企業での本番構築経験とは区別して公開しています。
 
 A personal [Cloud Resume Challenge](https://cloudresumechallenge.dev/) project connecting IT operations experience with hands-on AWS configuration, deployment automation, and testing. I used generative AI as a learning aid and performed the configuration, implementation, and deployment myself.
 
@@ -19,7 +18,7 @@ A personal [Cloud Resume Challenge](https://cloudresumechallenge.dev/) project c
    └─ counter.js ──▶ API Gateway (HTTP API, GET /count)
                          │
                          ▼
-                      Lambda (Python) ──▶ DynamoDB（訪問者数）
+                      Lambda (Python) ──▶ DynamoDB（アクセス数）
 ```
 
 | サービス | 役割 |
@@ -27,14 +26,14 @@ A personal [Cloud Resume Challenge](https://cloudresumechallenge.dev/) project c
 | Amazon S3 | 静的ファイル（HTML/CSS/JS）の保存。パブリックアクセスはすべてブロック |
 | Amazon CloudFront | HTTPS での配信とキャッシュ。Origin Access Control (OAC) で S3 へのアクセスを CloudFront のみに制限 |
 | Amazon API Gateway | HTTP API。CORS でこのサイトのオリジンのみ許可 |
-| AWS Lambda | 訪問者数を 1 増やして返す（Python） |
+| AWS Lambda | アクセス数を 1 増やして返す（Python） |
 | Amazon DynamoDB | API呼び出しに対するカウントを保存。`ADD` による原子的な加算で読み取り後の上書きを回避 |
-| AWS IAM | Lambda の実行ロールに対象テーブルの `UpdateItem` / `GetItem` のみ許可（最小権限） |
+| AWS IAM | DynamoDB操作の対象を限定する権限設計。現行コードが使う操作は`UpdateItem`。実設定はAWS側で管理 |
 
 ## 工夫した点 / Design decisions
 
 - **S3 を公開しない**：静的ウェブサイトホスティングではなく、CloudFront + OAC 経由でのみ配信
-- **最小権限**：Lambda には 1 テーブル・2 操作のみを許可するインラインポリシーを付与
+- **権限の限定**：DynamoDBアクセスを対象テーブルに限定する設計。現行のLambdaコードは`UpdateItem`のみを使用し、ログ出力には別途CloudWatch Logsの権限が必要。ポリシーの実値はリポジトリ未管理
 - **アトミックカウンター**：読み取り→加算→書き込みではなく、DynamoDB の `ADD` 式で競合を防止
 - **CORS の限定**：ブラウザ向けに許可オリジンを限定。CORSは認証や外部クライアントからの呼び出し防止の代わりにはならない
 - **日英バイリンガル**：ページ右上で日本語 / English を切り替え
@@ -62,7 +61,7 @@ python3.14 -m venv .venv
 python3 -m http.server 8000 --bind 127.0.0.1 --directory frontend
 ```
 
-ローカルの `/index.html`・`/en.html`・`/style.css`・`/counter.js` がHTTP 200で取得できることを確認します。LambdaはHTTPサーバーではなく、単体テストから呼び出します。テストはダミーの認証情報とMotoを使い、実AWSへのアクセスを必要としません。
+ローカルの `/index.html`・`/en.html`・`/style.css`・`/counter.js` がHTTP 200で取得できることを確認します。LambdaはHTTPサーバーではなく、単体テストから呼び出します。テストはダミーの認証情報とMotoを使い、実AWSへのアクセスを必要としません。既存のプロファイル名を維持したまま、一時的なテスト用設定・空の認証ファイルを使うため、個人のAWS設定に依存しません。
 
 `counter.js` は本番APIを参照します。ローカルオリジンがCORSで許可されていなければ、カウンターは `---` 表示になります。テスト目的で本番CORSを広げず、ブラウザ検証では通信をモック化するなどして切り分けます。
 
@@ -83,11 +82,20 @@ python3 -m http.server 8000 --bind 127.0.0.1 --directory frontend
 
 - フロントエンド：`main`への対象変更でS3同期とCloudFront無効化を実行。
 - バックエンド：対象のPRでテストを実行し、`main`への対象変更ではテスト後にLambdaコードを更新。
-- 現在はいずれも手動実行にも対応。ワークフロー内に手動実行時の主ブランチ限定はなく、運用上の注意点です。
-- フロントエンドの配信先バケット・ディストリビューションへの権限に加え、後端の更新には対象Lambdaへの`lambda:UpdateFunctionCode`が必要です。実際のポリシーはAWS側で確認します。
+- 手動実行にも対応しますが、デプロイは`main`のみ。PRではバックエンドのテストだけを実行し、バックエンドワークフロー自体の変更もテスト対象です。
+- フロントエンド・Lambdaそれぞれのデプロイを直列化し、実行中の処理はキャンセルしません。GitHubの並行実行制御は全コミットの厳密なFIFO実行を保証するものではありません。
+- ワークフローのGitHubトークン権限は`contents: read`。各ActionはNode.js 24対応版を使用します。
+- フロントエンドの配信先バケット・ディストリビューションへの権限に加え、バックエンドの更新には対象Lambdaへの`lambda:UpdateFunctionCode`が必要です。実際のポリシーはAWS側で確認します。
 - GitHub Secretsの名前は`AWS_ACCESS_KEY_ID`と`AWS_SECRET_ACCESS_KEY`。単体テストや静的ページ配信のローカル起動には不要です。
 
 AWS側のIAM・OAC・CORS設定は現在リポジトリだけでは再現できません。READMEは設計の説明であり、稼働中設定の監査証跡ではありません。公開サイトとコードはポートフォリオ用で、住所・電話番号・年収・在留情報を含む応募書類は置きません。
+
+## 応募書類 / Public resumes
+
+- [履歴書（公開版PDF）](docs/resume/resume.pdf) / [編集用Markdown](docs/resume/resume.md)
+- [職務経歴書（公開版PDF）](docs/resume/work-history.pdf) / [編集用Markdown](docs/resume/work-history.md)
+
+公開版には業務経験・資格・個人開発を掲載しています。住所、電話番号、年収、在留期限などを含む選考提出用の完全版とは分けて管理します。公開範囲と更新方法は[応募書類の説明](docs/resume/README.md)を参照してください。
 
 ## ディレクトリ構成 / Structure
 
@@ -96,16 +104,17 @@ frontend/              サイトのファイル（S3 にアップロード）
 backend/               Lambda 関数のコード
 backend/tests/         ユニットテスト（pytest + moto）
 .github/workflows/     GitHub Actions（自動デプロイ）
+docs/resume/          公開用の履歴書・職務経歴書（PDF・Markdown）
 ```
 
 ## 今後の予定 / Roadmap
 
 - [x] S3 + CloudFront で静的サイトを公開
-- [x] API Gateway + Lambda + DynamoDB で訪問者カウンター
-- [x] GitHub Actions による自動デプロイ（CI/CD）
+- [x] API Gateway + Lambda + DynamoDB でアクセスカウンター
 - [ ] Terraform によるインフラのコード化（IaC）
 - [ ] ログ・メトリクスに基づく監視と、調査・復旧手順の整備
-- [ ] デプロイ対象ブランチの制限、ロールバック手順、認証方式の見直し
+- [x] デプロイを`main`に限定し、並行実行を制御
+- [ ] ロールバック手順、認証方式の見直し
 - [x] Lambda のユニットテスト（pytest + moto）と自動デプロイ
 - [ ] 独自ドメイン
 - [ ] Qiita に構築記録を投稿

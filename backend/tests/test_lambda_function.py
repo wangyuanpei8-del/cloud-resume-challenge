@@ -3,6 +3,7 @@
 import importlib
 import json
 import os
+import shlex
 import sys
 
 import boto3
@@ -16,11 +17,31 @@ TABLE_NAME = "visitor-count"
 
 
 @pytest.fixture
-def lambda_module(monkeypatch):
+def lambda_module(monkeypatch, tmp_path):
     # ダミーの認証情報とリージョン（本物の鍵は使わない）
     monkeypatch.setenv("AWS_DEFAULT_REGION", "ap-southeast-2")
     monkeypatch.setenv("AWS_ACCESS_KEY_ID", "testing")
     monkeypatch.setenv("AWS_SECRET_ACCESS_KEY", "testing")
+
+    # 実環境の設定・認証ファイルに依存せず、既存のプロファイル名は維持する。
+    profiles = {
+        os.environ.get(name)
+        for name in ("AWS_PROFILE", "AWS_DEFAULT_PROFILE")
+        if os.environ.get(name)
+    }
+    config = tmp_path / "config"
+    config.write_text(
+        "[default]\nregion = ap-southeast-2\n"
+        + "".join(
+            f"[profile {shlex.quote(profile)}]\nregion = ap-southeast-2\n"
+            for profile in sorted(profiles)
+        ),
+        encoding="utf-8",
+    )
+    credentials = tmp_path / "credentials"
+    credentials.write_text("", encoding="utf-8")
+    monkeypatch.setenv("AWS_CONFIG_FILE", str(config))
+    monkeypatch.setenv("AWS_SHARED_CREDENTIALS_FILE", str(credentials))
 
     with mock_aws():
         # 本番と同じ形のテーブルを偽の DynamoDB に作る
