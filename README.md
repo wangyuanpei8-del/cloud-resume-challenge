@@ -1,6 +1,6 @@
 # Cloud Resume Challenge (AWS)
 
-**最終更新 / Last updated:** 2026-11-11 07:50 (JST)
+**最終更新 / Last updated:** 2026-11-11 08:16 (JST)
 
 運用保守・障害対応の経験を、AWS の構築・自動化へつなげるための個人プロジェクトです。日英バイリンガルの職務経歴サイトを AWS 上に構築しました。生成 AI を学習支援として活用し、設定・実装・デプロイは自分で行っています。
 
@@ -25,8 +25,9 @@ A personal [Cloud Resume Challenge](https://cloudresumechallenge.dev/) project: 
 | Lambda (Python) | アクセス数を 1 増やして返す |
 | DynamoDB | アクセス数を保存 |
 | IAM | Lambda 専用の最小権限ロール |
+| CloudWatch + SNS | Lambda のエラーと API の 5xx を検知し、メールで通知 |
 | GitHub Actions | フロントエンドの配信、テスト後の Lambda 更新 |
-| Terraform | バックエンド（API Gateway・Lambda・DynamoDB・IAM）をコードで管理 |
+| Terraform | バックエンド（API Gateway・Lambda・DynamoDB・IAM・監視）をコードで管理 |
 
 ## 工夫した点 / Design decisions
 
@@ -35,6 +36,7 @@ A personal [Cloud Resume Challenge](https://cloudresumechallenge.dev/) project: 
 - **最小権限**：Lambda の実行ロールは、対象テーブルへの `UpdateItem` と自分のロググループへの書き込みだけを許可
 - **テストが通ったときだけデプロイ**：pytest + moto の単体テスト 4 件が成功した場合のみ Lambda のコードを更新
 - **責務の分離**：Lambda のコードは GitHub Actions、設定は Terraform が管理
+- **障害に自分で気づける仕組み**：Lambda のエラーと API の 5xx を CloudWatch アラームで検知し、SNS でメール通知。通知先のアドレスは公開リポジトリに載せず、コンソールで登録
 - **OIDC を使えない制約への対応**：アカウントの SCP で OIDC プロバイダーを作成できないため、権限を絞った IAM ユーザーのアクセスキーを GitHub Secrets に保存
 
 ## CI/CD（GitHub Actions）
@@ -60,6 +62,7 @@ A personal [Cloud Resume Challenge](https://cloudresumechallenge.dev/) project: 
 | `lambda.tf` | Lambda 関数（設定のみ）と、API Gateway からの呼び出し許可 |
 | `iam.tf` | Lambda 専用の最小権限ロール |
 | `apigateway.tf` | HTTP API・統合・ルート・ステージ |
+| `monitoring.tf` | SNS トピックと CloudWatch アラーム（Lambda エラー・API 5xx） |
 
 - **state**：専用の S3 バケットに保存（バージョニング有効、`use_lockfile` でロック）
 - **実行時の権限**：普段は `ReadOnlyAccess` の IAM ユーザーで `plan` を実行。変更が必要なときだけ、対象を絞った書き込み権限を一時的に付与
@@ -107,5 +110,5 @@ docs/resume/         公開用の履歴書・職務経歴書（PDF・Markdown）
 - [x] GitHub Actions による自動デプロイと単体テスト
 - [x] Terraform でバックエンドをコード化（既存リソースを import）
 - [x] Lambda の実行ロールを最小権限に変更
-- [ ] CloudWatch による監視・通知
+- [x] CloudWatch による監視・通知
 - [ ] S3・CloudFront の Terraform 化
