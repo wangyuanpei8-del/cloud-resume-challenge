@@ -1,6 +1,6 @@
 # Cloud Resume Challenge (AWS)
 
-**最終更新 / Last updated:** 2026-11-11 00:20 (JST)
+**最終更新 / Last updated:** 2026-11-11 07:47 (JST)
 
 運用保守・障害対応の経験を、AWS の構築・自動化へつなげるための個人プロジェクトです。日英バイリンガルの職務経歴サイトを AWS 上に構築しました。生成 AI を学習支援として活用し、設定・実装・デプロイは自分で行っています。
 
@@ -22,7 +22,7 @@ A personal [Cloud Resume Challenge](https://cloudresumechallenge.dev/) project: 
 |---|---|
 | S3 + CloudFront | 静的サイトの配信。バケットは非公開で、OAC により CloudFront からのみ読み取り可能 |
 | API Gateway (HTTP API) | `GET /count` を Lambda に渡す。CORS はこのサイトのオリジンのみ許可 |
-| Lambda (Python) | アクセス数を 1 増やして返す |
+| Lambda (Python) | アクセス数を 1 増やして返す。アクセス日時・送信元 IP を CloudWatch Logs に記録（非公開） |
 | DynamoDB | アクセス数を保存 |
 | IAM | Lambda 専用の最小権限ロール |
 | GitHub Actions | フロントエンドの配信、テスト後の Lambda 更新 |
