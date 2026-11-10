@@ -1,6 +1,6 @@
 # Lambda 専用の実行ロール（最小権限）
-# import 時に、元のロール PowerUserRole に PowerUserAccess（ほぼ全サービスの操作権限）が
-# 付いていることが分かったため、必要な権限だけを持つロールに置き換えた。
+# import したとき、元のロールに PowerUserAccess（ほぼ全サービスの操作権限）が
+# 付いていると分かったので、必要な権限だけを持つこのロールに置き換えた。
 
 resource "aws_iam_role" "visitor_counter" {
   name        = "visitor-counter-role"
@@ -42,25 +42,9 @@ resource "aws_iam_role_policy" "visitor_counter_logs" {
       Effect = "Allow"
       Action = ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"]
       Resource = [
-        "arn:aws:logs:ap-southeast-2:331384580338:log-group:/aws/lambda/visitor-counter",
-        "arn:aws:logs:ap-southeast-2:331384580338:log-group:/aws/lambda/visitor-counter:*",
+        "arn:aws:logs:ap-southeast-2:331384580338:log-group:/aws/lambda/${aws_lambda_function.visitor_counter.function_name}",
+        "arn:aws:logs:ap-southeast-2:331384580338:log-group:/aws/lambda/${aws_lambda_function.visitor_counter.function_name}:*",
       ]
     }]
   })
-}
-
-# 元のロール PowerUserRole は Terraform の管理から外すだけで、削除はしない
-# （コンソールで作られた共用ロールの可能性があるため。不要と確認できたら手動で削除する）
-removed {
-  from = aws_iam_role.lambda_role
-  lifecycle {
-    destroy = false
-  }
-}
-
-removed {
-  from = aws_iam_role_policy.dynamodb_access
-  lifecycle {
-    destroy = false
-  }
 }
