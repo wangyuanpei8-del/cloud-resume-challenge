@@ -29,8 +29,9 @@ Windows Server／VMware環境の運用保守と、Linux・AWS環境での障害�
 | 設計上の工夫 | マネージドサービスでサーバー管理を軽減。DynamoDBの原子的な加算を採用。カウンター取得失敗時も職務経歴の本文を表示。 |
 | 自動化・検証 | GitHub Actionsでフロントエンドを配信し、テスト成功後にLambdaを更新。pytest・Motoで応答、初回値、連続加算、保存結果の4項目を確認。 |
 | IaC（Terraform） | コンソールで作成済みのバックエンド（API Gateway・Lambda・DynamoDB・IAM）をimportし、planで差分ゼロを確認。その過程でLambda実行ロールの過剰な権限に気づき、最小権限の専用ロールに置き換え。 |
+| 監視・通知 | Lambdaのエラーと API Gatewayの5xxをCloudWatchアラームで検知し、SNSでメール通知。Terraformで管理し、通知テストを実施。 |
 
-今後の課題：監視・通知の整備、S3・CloudFrontのTerraform化。単体テストはモックでの検証であり、実AWSの設定検証とは区別しています。
+今後の課題：S3・CloudFrontのTerraform化。単体テストはモックでの検証であり、実AWSの設定検証とは区別しています。
 
 公開サイト：https://d23dnziyuzdous.cloudfront.net
 
@@ -91,7 +92,7 @@ Linuxサーバー・AWS等で稼働する自社サービスのシステム保守
 | --- | --- |
 | 実務｜約2年 | Windows Server、VMware：開発環境の運用保守、リソース監視、ログ確認・障害対応 |
 | 実務｜現職 | Linux、Zabbix、CloudWatch Logs：2026年9月から、障害一次切り分け・ログ調査・エスカレーション |
-| 個人開発 | S3、CloudFront、API Gateway、Lambda、DynamoDB、IAM設定。Python、GitHub Actions、Terraform、pytest、Moto。 |
+| 個人開発 | S3、CloudFront、API Gateway、Lambda、DynamoDB、IAM設定、CloudWatchアラーム・SNS。Python、GitHub Actions、Terraform、pytest、Moto。 |
 | その他・基礎 | AVEVA System Platform／InTouch HMI：約2年。SQL Server／PostgreSQL：SQLによる参照・更新の基礎。Java・PL/SQL：入社時研修。 |
 | 学習中 | AWS SAA試験に向けたVPC、EC2、RDS等の設計知識。 |
 
