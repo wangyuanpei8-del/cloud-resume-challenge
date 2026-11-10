@@ -8,14 +8,6 @@ import {
   id = "visitor-counter"
 }
 import {
-  to = aws_iam_role.lambda_role
-  id = "PowerUserRole"
-}
-import {
-  to = aws_iam_role_policy.dynamodb_access
-  id = "PowerUserRole:visitor-count-access"
-}
-import {
   to = aws_apigatewayv2_api.visitor_api
   id = "k8nzp59qa1"
 }
