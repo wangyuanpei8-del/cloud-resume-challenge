@@ -33,7 +33,7 @@ A personal [Cloud Resume Challenge](https://cloudresumechallenge.dev/) project c
 ## 工夫した点 / Design decisions
 
 - **S3 を公開しない**：静的ウェブサイトホスティングではなく、CloudFront + OAC 経由でのみ配信
-- **権限の限定**：DynamoDBアクセスを対象テーブルに限定する設計。現行のLambdaコードは`UpdateItem`のみを使用し、ログ出力には別途CloudWatch Logsの権限が必要。ポリシーは `infra/` で管理。ただし実行ロールには `PowerUserAccess` も付いており、最小権限化は未完了（後述）
+- **権限の限定**：DynamoDBアクセスを対象テーブルに限定する設計。現行のLambdaコードは`UpdateItem`のみを使用し、ログ出力には別途CloudWatch Logsの権限が必要。Lambda の実行ロールは Terraform で作成した専用ロールで、対象テーブルへの `UpdateItem` と自分のロググループへの書き込みだけを許可
 - **アトミックカウンター**：読み取り→加算→書き込みではなく、DynamoDB の `ADD` 式で競合を防止
 - **CORS の限定**：ブラウザ向けに許可オリジンを限定。CORSは認証や外部クライアントからの呼び出し防止の代わりにはならない
 - **日英バイリンガル**：ページ右上で日本語 / English を切り替え
@@ -80,14 +80,15 @@ terraform plan   # "No changes." = コードと実環境の差分ゼロ
 | ファイル | 内容 |
 |---|---|
 | `providers.tf` | AWS プロバイダー（`~> 6.0`）と S3 バックエンド |
-| `imports.tf` | 取り込んだ9リソースの `import` ブロック |
+| `imports.tf` | 既存リソースを取り込んだ `import` ブロック |
+| `iam.tf` | Lambda 専用の最小権限ロール（Terraform で新規作成） |
 | `generated.tf` | `terraform plan -generate-config-out` で生成し、エラー箇所を修正したコード |
 | `lambda_override.tf` | Lambda のコードは GitHub Actions がデプロイするため、`filename`・`source_code_hash` の変更を無視 |
 
 - **対象**：DynamoDB テーブル、Lambda 関数（設定のみ）、IAM ロールとインラインポリシー、API Gateway（API・統合・ルート・ステージ）、Lambda の呼び出し許可
 - **state**：専用の S3 バケットに保存（バージョニング有効、`use_lockfile` による S3 ネイティブロック）。サイト配信用バケットは `s3 sync --delete` を使うため分離
-- **実行環境・権限**：GitHub Codespaces で実行。import と plan は読み取りだけで済むため、`ReadOnlyAccess` と state バケットへの書き込みのみを許可した専用 IAM ユーザーを使用。キーは Codespaces Secrets に保存し、リポジトリには含めない
-- **import で分かったこと**：Lambda の実行ロールに AWS 管理ポリシー `PowerUserAccess` が付いており、必要以上に広い権限だった。最小権限の専用ロールへの置き換えを次の課題としている
+- **実行環境・権限**：GitHub Codespaces で実行。import と plan は読み取りだけで済むため、`ReadOnlyAccess` と state バケットへの書き込みのみを許可した専用 IAM ユーザーを使用。キーは Codespaces Secrets に保存し、リポジトリには含めない。ロール置き換えの apply 時だけ、対象ロールと Lambda に限定した書き込み権限を一時的に付与し、終了後に外した
+- **import で分かったこと**：Lambda の実行ロールに AWS 管理ポリシー `PowerUserAccess` が付いており、必要以上に広い権限だった。Terraform で最小権限の専用ロール `visitor-counter-role` を作成して置き換え、元のロールは `removed` ブロックで管理対象から外した（削除はしない）
 
 ## 検証範囲 / Validation scope
 
@@ -137,7 +138,7 @@ docs/resume/          公開用の履歴書・職務経歴書（PDF・Markdown�
 - [x] S3 + CloudFront で静的サイトを公開
 - [x] API Gateway + Lambda + DynamoDB でアクセスカウンター
 - [x] Terraform でバックエンドをコード化（既存リソースを import、plan 差分ゼロ）
-- [ ] Lambda の実行ロールを最小権限の専用ロールに置き換え
+- [x] Lambda の実行ロールを最小権限の専用ロールに置き換え（import で過剰権限を発見）
 - [ ] S3・CloudFront の Terraform 化
 - [ ] ログ・メトリクスに基づく監視と、調査・復旧手順の整備
 - [x] デプロイを`main`に限定し、並行実行を制御
