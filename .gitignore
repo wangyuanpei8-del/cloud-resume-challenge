@@ -4,3 +4,10 @@ __pycache__/
 *.py[cod]
 .DS_Store
 Thumbs.db
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+infra/lambda.zip
