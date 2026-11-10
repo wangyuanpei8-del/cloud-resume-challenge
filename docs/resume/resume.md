@@ -43,7 +43,7 @@
 
 ## AWS個人開発
 
-S3・CloudFront・OACによる静的サイト配信と、API Gateway・Lambda・DynamoDBによるアクセスカウンターを構築。GitHub Actionsによるデプロイ自動化と、pytest・Motoによる4項目の単体テストを実装。生成AIを学習支援として活用し、自分で設定・実装・デプロイを行いました。
+S3・CloudFront・OACによる静的サイト配信と、API Gateway・Lambda・DynamoDBによるアクセスカウンターを構築。GitHub Actionsによるデプロイ自動化と、pytest・Motoによる4項目の単体テストを実装。既存リソースをTerraformにimportしてコード化し、Lambda実行ロールを最小権限に変更。生成AIを学習支援として活用し、自分で設定・実装・デプロイを行いました。
 
 ## 志望方向
 
