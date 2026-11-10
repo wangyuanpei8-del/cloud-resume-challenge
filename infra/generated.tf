@@ -102,7 +102,7 @@ resource "aws_lambda_function" "visitor_counter" {
   replace_security_groups_on_destroy   = null
   replacement_security_group_ids       = null
   reserved_concurrent_executions       = -1
-  role                                 = "arn:aws:iam::331384580338:role/PowerUserRole"
+  role                                 = aws_iam_role.visitor_counter.arn # 最小権限の専用ロール（iam.tf）
   runtime                              = "python3.14"
   s3_bucket                            = null
   s3_key                               = null
@@ -147,20 +147,6 @@ resource "aws_apigatewayv2_stage" "default" {
   }
 }
 
-# __generated__ by Terraform from "PowerUserRole:visitor-count-access"
-resource "aws_iam_role_policy" "dynamodb_access" {
-  name = "visitor-count-access"
-  policy = jsonencode({
-    Statement = [{
-      Action   = ["dynamodb:UpdateItem", "dynamodb:GetItem"]
-      Effect   = "Allow"
-      Resource = "arn:aws:dynamodb:ap-southeast-2:331384580338:table/visitor-count"
-    }]
-    Version = "2012-10-17"
-  })
-  role = "PowerUserRole"
-}
-
 # __generated__ by Terraform
 resource "aws_dynamodb_table" "visitor_count" {
   billing_mode                = "PAY_PER_REQUEST"
@@ -185,32 +171,10 @@ resource "aws_dynamodb_table" "visitor_count" {
     type = "S"
   }
   point_in_time_recovery {
-    enabled                 = false
+    enabled = false
   }
   ttl {
     attribute_name = null
     enabled        = false
   }
-}
-
-# __generated__ by Terraform from "PowerUserRole"
-resource "aws_iam_role" "lambda_role" {
-  assume_role_policy = jsonencode({
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Principal = {
-        Service = "lambda.amazonaws.com"
-      }
-    }]
-    Version = "2012-10-17"
-  })
-  description           = "Power user role for lambda.amazonaws.com"
-  force_detach_policies = false
-  max_session_duration  = 3600
-  name                  = "PowerUserRole"
-  path                  = "/"
-  permissions_boundary  = null
-  tags                  = {}
-  tags_all              = {}
 }
