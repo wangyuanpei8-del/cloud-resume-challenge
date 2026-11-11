@@ -14,7 +14,8 @@
 <section class="card" id="project" aria-labelledby="project-title">
 <div class="section-heading"><h2 id="project-title">AWS 個人開発</h2><span class="tag">Cloud Resume Challenge</span></div>
 <h3>サーバーレス構成の職務経歴サイト</h3><p>業務での運用経験を構築・自動化につなげるため、この日英対応サイトをAWS上に構築しました。生成AIを学習支援として活用し、自分で設定・実装・デプロイを行った個人プロジェクトです。</p>
-<figure class="architecture"><figcaption>構成概要：静的コンテンツの配信と、アクセスカウンターの処理</figcaption>
+<figure class="architecture"><figcaption>構成図：ページの配信、アクセスカウンター、監視・通知、更新の仕組み</figcaption>
+<img src="architecture-ja.svg" width="760" height="438" alt="構成図。ブラウザからCloudFront、OACを経由して非公開のS3へ。ブラウザからAPI Gateway、Lambda、DynamoDBへ。API GatewayとLambdaのエラー数をCloudWatchアラームが検知し、SNSがメールで通知する。GitHub Actionsがフロントエンドの同期とLambdaの更新を行い、Terraformがバックエンドと監視の設定を管理する。">
 <div class="flow"><span>ブラウザ</span><b aria-hidden="true">→</b><span>CloudFront</span><b aria-hidden="true">→ OAC →</b><span>S3（非公開）</span></div>
 <div class="flow"><span>ブラウザ</span><b aria-hidden="true">→</b><span>API Gateway</span><b aria-hidden="true">→</b><span>Lambda / Python</span><b aria-hidden="true">→</b><span>DynamoDB</span></div></figure>
 <div class="project-grid"><div><h3>構築・実装したこと</h3><ul><li>S3・CloudFrontによる静的コンテンツ配信と、OACによるS3へのアクセス制限</li><li>API Gateway・Lambda・DynamoDBによるアクセスカウンター</li><li>GitHub Actionsによるフロントエンド配信と、テスト成功後のLambda更新</li><li>Terraformによるバックエンドのコード化（既存リソースをimport）と、Lambda実行ロールの最小権限化</li><li>CloudWatchアラーム（Lambdaエラー・API 5xx）とSNSによるメール通知</li></ul></div><div><h3>設計と検証のポイント</h3><ul><li>サーバー管理の負担を抑えるため、マネージドサービスを採用</li><li>DynamoDBの原子的な加算で、読み取り後の上書きによる更新競合を回避</li><li>pytest・Motoでレスポンス、初回値、連続加算、保存結果の4項目を検証</li></ul></div></div>

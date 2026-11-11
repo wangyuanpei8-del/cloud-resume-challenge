@@ -1,6 +1,6 @@
 # Cloud Resume Challenge (AWS)
 
-**最終更新 / Last updated:** 2026-11-11 08:30 (JST)
+**最終更新 / Last updated:** 2026-11-11 10:43 (JST)
 
 運用保守・障害対応の経験を、AWS の構築・自動化へつなげるための個人プロジェクトです。日英バイリンガルの職務経歴サイトを AWS 上に構築しました。生成 AI を学習支援として活用し、設定・実装・デプロイは自分で行っています。
 
@@ -10,13 +10,9 @@ A personal [Cloud Resume Challenge](https://cloudresumechallenge.dev/) project: 
 
 ## アーキテクチャ / Architecture
 
-```
-ブラウザ ──HTTPS──▶ CloudFront ──OAC──▶ S3（非公開バケット）
-   │
-   └─ counter.js ──▶ API Gateway (HTTP API, GET /count)
-                         ▼
-                      Lambda (Python) ──▶ DynamoDB（アクセス数）
-```
+![構成図 / Architecture diagram](frontend/architecture-ja.svg)
+
+English version: [architecture-en.svg](frontend/architecture-en.svg)
 
 | サービス | 役割 |
 |---|---|
