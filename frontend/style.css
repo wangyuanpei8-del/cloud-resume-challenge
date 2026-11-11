@@ -212,8 +212,15 @@ p:last-child {
   color:var(--muted);
   margin-bottom:12px;
 }
+.architecture img {
+  display:block;
+  width:100%;
+  height:auto;
+  border:1px solid var(--line);
+  border-radius:4px;
+}
 .flow {
-  display:flex;
+  display:none;
   flex-wrap:wrap;
   align-items:center;
   gap:8px;
@@ -378,7 +385,11 @@ p:last-child {
     margin-left:0;
     margin-right:0;
   }
+  .architecture img {
+    display:none;
+  }
   .flow {
+    display:flex;
     font-size:.75rem;
     gap:5px;
   }
