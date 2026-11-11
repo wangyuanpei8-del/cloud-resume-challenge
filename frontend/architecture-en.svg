@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 40 760 438" role="img" aria-label="Architecture: pages come from CloudFront, the count comes from the API" font-family="system-ui,-apple-system,'Segoe UI','Noto Sans CJK JP','Hiragino Sans','Yu Gothic',Meiryo,sans-serif" font-size="13">
+<rect x="0" y="40" width="760" height="438" fill="#ffffff"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8fa1b3"/></marker></defs>
+<g fill="none" stroke="#8fa1b3" stroke-width="1.25"><path d="M160 96H220" marker-end="url(#arrow)"/><path d="M360 96H570" marker-end="url(#arrow)"/><path d="M160 184H220" marker-end="url(#arrow)"/><path d="M360 184H390" marker-end="url(#arrow)"/><path d="M530 184H570" marker-end="url(#arrow)"/><path d="M310 212V256" marker-end="url(#arrow)"/><path d="M440 212V256" marker-end="url(#arrow)"/><path d="M460 284H570" marker-end="url(#arrow)"/></g>
+<text x="220" y="60" text-anchor="start" font-size="11.5" fill="#536579">A: Serving the page</text>
+<text x="220" y="148" text-anchor="start" font-size="11.5" fill="#536579">B: Counting visits</text>
+<text x="278" y="288" text-anchor="end" font-size="11.5" fill="#536579">Monitoring</text>
+<rect x="24" y="68" width="136" height="144" rx="8" fill="#ffffff" stroke="#8fa1b3" stroke-width="1.25"/>
+<text x="92.0" y="136.0" text-anchor="middle" font-weight="600" fill="#202d3d">Browser</text>
+<text x="92.0" y="154.0" text-anchor="middle" font-size="11.5" fill="#536579">Visitor</text>
+<rect x="220" y="68" width="140" height="56" rx="8" fill="#ffffff" stroke="#8fa1b3" stroke-width="1.25"/>
+<text x="290.0" y="92.0" text-anchor="middle" font-weight="600" fill="#202d3d">CloudFront</text>
+<text x="290.0" y="110.0" text-anchor="middle" font-size="11.5" fill="#536579">HTTPS, caching</text>
+<rect x="570" y="68" width="140" height="56" rx="8" fill="#ffffff" stroke="#8fa1b3" stroke-width="1.25"/>
+<text x="640.0" y="92.0" text-anchor="middle" font-weight="600" fill="#202d3d">S3</text>
+<text x="640.0" y="110.0" text-anchor="middle" font-size="11.5" fill="#536579">Private bucket</text>
+<text x="465" y="88" text-anchor="middle" font-size="11.5" fill="#536579">OAC-signed requests</text>
+<rect x="220" y="156" width="140" height="56" rx="8" fill="#ffffff" stroke="#8fa1b3" stroke-width="1.25"/>
+<text x="290.0" y="180.0" text-anchor="middle" font-weight="600" fill="#202d3d">API Gateway</text>
+<text x="290.0" y="198.0" text-anchor="middle" font-size="11.5" fill="#536579">GET /count</text>
+<rect x="390" y="156" width="140" height="56" rx="8" fill="#ffffff" stroke="#8fa1b3" stroke-width="1.25"/>
+<text x="460.0" y="180.0" text-anchor="middle" font-weight="600" fill="#202d3d">Lambda</text>
+<text x="460.0" y="198.0" text-anchor="middle" font-size="11.5" fill="#536579">Adds 1 to count</text>
+<rect x="570" y="156" width="140" height="56" rx="8" fill="#ffffff" stroke="#8fa1b3" stroke-width="1.25"/>
+<text x="640.0" y="180.0" text-anchor="middle" font-weight="600" fill="#202d3d">DynamoDB</text>
+<text x="640.0" y="198.0" text-anchor="middle" font-size="11.5" fill="#536579">Stores the count</text>
+<text x="375" y="238" text-anchor="middle" font-size="11.5" fill="#536579">Error counts</text>
+<rect x="290" y="256" width="170" height="56" rx="8" fill="#ffffff" stroke="#8fa1b3" stroke-width="1.25"/>
+<text x="375.0" y="280.0" text-anchor="middle" font-weight="600" fill="#202d3d">CloudWatch alarms</text>
+<text x="375.0" y="298.0" text-anchor="middle" font-size="11.5" fill="#536579">Detect errors</text>
+<rect x="570" y="256" width="140" height="56" rx="8" fill="#ffffff" stroke="#8fa1b3" stroke-width="1.25"/>
+<text x="640.0" y="280.0" text-anchor="middle" font-weight="600" fill="#202d3d">SNS</text>
+<text x="640.0" y="298.0" text-anchor="middle" font-size="11.5" fill="#536579">Email alerts</text>
+<rect x="24" y="340" width="712" height="122" rx="8" fill="#eef2f6"/>
+<text x="40" y="363" font-weight="600" fill="#202d3d">How the stack is updated and managed</text>
+<rect x="40" y="374" width="330" height="72" rx="8" fill="#ffffff" stroke="#8fa1b3" stroke-width="1.25"/>
+<text x="56" y="398" font-weight="600" fill="#202d3d">GitHub Actions</text>
+<text x="56" y="416" text-anchor="start" font-size="11.5" fill="#536579">Syncs frontend/ changes to S3</text>
+<text x="56" y="432" text-anchor="start" font-size="11.5" fill="#536579">Updates Lambda code after tests pass</text>
+<rect x="390" y="374" width="330" height="72" rx="8" fill="#ffffff" stroke="#8fa1b3" stroke-width="1.25"/>
+<text x="406" y="398" font-weight="600" fill="#202d3d">Terraform</text>
+<text x="406" y="416" text-anchor="start" font-size="11.5" fill="#536579">Manages backend and monitoring as code</text>
+<text x="406" y="432" text-anchor="start" font-size="11.5" fill="#536579">S3 and CloudFront not yet covered</text>
+</svg>
