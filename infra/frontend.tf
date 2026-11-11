@@ -1,34 +1,41 @@
-# __generated__ by Terraform
-# Please review these resources and move them into your main configuration files.
+# サイトのファイルを置く S3 バケット（非公開）
+# コンソールで作成済みのものを import した。中のファイルは GitHub Actions が同期する
+resource "aws_s3_bucket" "site" {
+  bucket              = "wangyuanpei-2026"
+  bucket_namespace    = "global"
+  force_destroy       = false
+  object_lock_enabled = false
+  region              = "ap-southeast-2"
+  tags                = {}
+}
 
-# __generated__ by Terraform from "wangyuanpei-2026"
+# バケットへの公開アクセスをすべてブロック
 resource "aws_s3_bucket_public_access_block" "site" {
   block_public_acls       = true
   block_public_policy     = true
-  bucket                  = "wangyuanpei-2026"
+  bucket                  = aws_s3_bucket.site.id
   ignore_public_acls      = true
   region                  = "ap-southeast-2"
   restrict_public_buckets = true
-  skip_destroy            = null
 }
 
-# __generated__ by Terraform from "wangyuanpei-2026"
+# バケットポリシー：このサイトの CloudFront ディストリビューションからの読み取りだけを許可
 resource "aws_s3_bucket_policy" "site" {
-  bucket = "wangyuanpei-2026"
+  bucket = aws_s3_bucket.site.id
   policy = jsonencode({
     Id = "PolicyForCloudFrontPrivateContent"
     Statement = [{
       Action = "s3:GetObject"
       Condition = {
         ArnLike = {
-          "AWS:SourceArn" = "arn:aws:cloudfront::331384580338:distribution/EM4EI1GT4BJCD"
+          "AWS:SourceArn" = aws_cloudfront_distribution.site.arn
         }
       }
       Effect = "Allow"
       Principal = {
         Service = "cloudfront.amazonaws.com"
       }
-      Resource = "arn:aws:s3:::wangyuanpei-2026/*"
+      Resource = "${aws_s3_bucket.site.arn}/*"
       Sid      = "AllowCloudFrontServicePrincipal"
     }]
     Version = "2008-10-17"
@@ -36,7 +43,7 @@ resource "aws_s3_bucket_policy" "site" {
   region = "ap-southeast-2"
 }
 
-# __generated__ by Terraform from "E34X1OL7F8VVMV"
+# OAC：CloudFront が S3 へのリクエストに署名するための設定
 resource "aws_cloudfront_origin_access_control" "site" {
   description                       = "Created by CloudFront"
   name                              = "oac-wangyuanpei-2026.s3.ap-southeast-2.amazonaws.com-mw7nbtkmv0l"
@@ -45,11 +52,10 @@ resource "aws_cloudfront_origin_access_control" "site" {
   signing_protocol                  = "sigv4"
 }
 
-# __generated__ by Terraform from "EM4EI1GT4BJCD"
+# CloudFront ディストリビューション：HTTPS でサイトを配信する入口
+# キャッシュポリシーは AWS 管理の CachingOptimized を使用
 resource "aws_cloudfront_distribution" "site" {
   aliases             = []
-  anycast_ip_list_id  = null
-  comment             = null
   default_root_object = "index.html"
   enabled             = true
   http_version        = "http2"
@@ -60,28 +66,20 @@ resource "aws_cloudfront_distribution" "site" {
   tags = {
     Name = "WypResume"
   }
-  tags_all = {
-    Name = "WypResume"
-  }
   wait_for_deployment = true
-  web_acl_id          = null
   default_cache_behavior {
-    allowed_methods            = ["GET", "HEAD"]
-    cache_policy_id            = "658327ea-f89d-4fab-a63d-7e88639e58f6"
-    cached_methods             = ["GET", "HEAD"]
-    compress                   = true
-    default_ttl                = 0
-    field_level_encryption_id  = null
-    max_ttl                    = 0
-    min_ttl                    = 0
-    origin_request_policy_id   = null
-    realtime_log_config_arn    = null
-    response_headers_policy_id = null
-    smooth_streaming           = false
-    target_origin_id           = "wangyuanpei-2026.s3.ap-southeast-2.amazonaws.com-mw7na7cmwae"
-    trusted_key_groups         = []
-    trusted_signers            = []
-    viewer_protocol_policy     = "redirect-to-https"
+    allowed_methods        = ["GET", "HEAD"]
+    cache_policy_id        = "658327ea-f89d-4fab-a63d-7e88639e58f6"
+    cached_methods         = ["GET", "HEAD"]
+    compress               = true
+    default_ttl            = 0
+    max_ttl                = 0
+    min_ttl                = 0
+    smooth_streaming       = false
+    target_origin_id       = "wangyuanpei-2026.s3.ap-southeast-2.amazonaws.com-mw7na7cmwae"
+    trusted_key_groups     = []
+    trusted_signers        = []
+    viewer_protocol_policy = "redirect-to-https"
     grpc_config {
       enabled = false
     }
@@ -89,10 +87,9 @@ resource "aws_cloudfront_distribution" "site" {
   origin {
     connection_attempts         = 3
     connection_timeout          = 10
-    domain_name                 = "wangyuanpei-2026.s3.ap-southeast-2.amazonaws.com"
-    origin_access_control_id    = "E34X1OL7F8VVMV"
+    domain_name                 = aws_s3_bucket.site.bucket_regional_domain_name
+    origin_access_control_id    = aws_cloudfront_origin_access_control.site.id
     origin_id                   = "wangyuanpei-2026.s3.ap-southeast-2.amazonaws.com-mw7na7cmwae"
-    origin_path                 = null
     response_completion_timeout = 0
   }
   restrictions {
@@ -102,21 +99,7 @@ resource "aws_cloudfront_distribution" "site" {
     }
   }
   viewer_certificate {
-    acm_certificate_arn            = null
     cloudfront_default_certificate = true
-    iam_certificate_id             = null
     minimum_protocol_version       = "TLSv1"
-    ssl_support_method             = null
   }
-}
-
-# __generated__ by Terraform from "wangyuanpei-2026"
-resource "aws_s3_bucket" "site" {
-  bucket              = "wangyuanpei-2026"
-  bucket_namespace    = "global"
-  force_destroy       = false
-  object_lock_enabled = false
-  region              = "ap-southeast-2"
-  tags                = {}
-  tags_all            = {}
 }
