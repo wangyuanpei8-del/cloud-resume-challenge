@@ -1,6 +1,6 @@
 # Cloud Resume Challenge (AWS)
 
-**最終更新 / Last updated:** 2026-11-11 18:41 (JST)
+**最終更新 / Last updated:** 2026-11-14 00:51 (JST)
 
 運用保守・障害対応の経験を、AWS の構築・自動化へつなげるための個人プロジェクトです。日英バイリンガルの職務経歴サイトを AWS 上に構築しました。生成 AI を学習支援として活用し、設定・実装・デプロイは自分で行っています。
 
@@ -92,15 +92,7 @@ frontend/            サイトのファイル（S3 にアップロード）
 backend/             Lambda 関数のコードと単体テスト
 infra/               Terraform（配信・バックエンド・監視）
 .github/workflows/   GitHub Actions
-docs/resume/         公開用の履歴書・職務経歴書（PDF・Markdown）
 ```
-
-## 応募書類 / Public resumes
-
-- [履歴書（公開版 PDF）](docs/resume/resume.pdf)
-- [職務経歴書（公開版 PDF）](docs/resume/work-history.pdf)
-
-住所・電話番号・年収・在留情報などを含む選考提出用の完全版は、このリポジトリには置いていません。
 
 ## 今後の予定 / Roadmap
 
