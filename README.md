@@ -1,8 +1,8 @@
 # Cloud Resume Challenge (AWS)
 
-**最終更新 / Last updated:** 2026-11-14 11:20 (JST)
+**最終更新 / Last updated:** 2026-11-14 12:25 (JST)
 
-運用保守・障害対応の経験を、AWS の構築・自動化へつなげるための個人プロジェクトです。日英バイリンガルの職務経歴サイトを AWS 上に構築しました。生成 AI を学習支援として活用し、設定・実装・デプロイは自分で行っています。
+運用保守・構築・障害対応の経験を、AWS の構築・自動化へつなげるための個人プロジェクトです。日英バイリンガルの職務経歴サイトを AWS 上に構築しました。生成 AI を学習支援として活用し、設定・実装・デプロイは自分で行っています。
 
 A personal [Cloud Resume Challenge](https://cloudresumechallenge.dev/) project: a bilingual resume site on AWS with a serverless access counter, CI/CD, unit tests, and Terraform. I used generative AI as a learning aid and did the configuration, implementation, and deployment myself.
 
