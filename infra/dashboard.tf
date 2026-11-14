@@ -1,5 +1,7 @@
 # ダッシュボード：サイトの状態を 1 画面で確認する
-# 上段にアラームの状態、中段に API Gateway、下段に Lambda と DynamoDB を並べる
+# 上段にアラームの状態、中段に API Gateway、下段に Lambda と DynamoDB、最下段に訪問者の集計を並べる
+# 訪問者の集計は Lambda が CloudWatch Logs に出す type=visit のログを Logs Insights で集計する
+# （ダッシュボード右上の期間で集計範囲が変わる。HeadlessChrome は動作確認用の自動ブラウザなので除外）
 locals {
   dashboard_region = "ap-southeast-2"
 
@@ -9,6 +11,8 @@ locals {
   ]
   lambda_dimensions = ["FunctionName", aws_lambda_function.visitor_counter.function_name]
   table_dimensions  = ["TableName", aws_dynamodb_table.visitor_count.name]
+
+  visit_logs = "SOURCE '/aws/lambda/${aws_lambda_function.visitor_counter.function_name}' | filter type = \"visit\" | filter user_agent not like /HeadlessChrome/"
 }
 
 resource "aws_cloudwatch_dashboard" "site" {
@@ -131,6 +135,45 @@ resource "aws_cloudwatch_dashboard" "site" {
             concat(["AWS/DynamoDB", "ConsumedWriteCapacityUnits"], local.table_dimensions),
             concat(["AWS/DynamoDB", "WriteThrottleEvents"], local.table_dimensions),
           ]
+        }
+      },
+      {
+        type   = "log"
+        x      = 0
+        y      = 15
+        width  = 24
+        height = 3
+        properties = {
+          title  = "訪問者：人数（IP 数）と総閲覧数"
+          region = local.dashboard_region
+          view   = "table"
+          query  = "${local.visit_logs} | stats count_distinct(ip) as visitors, count(*) as views"
+        }
+      },
+      {
+        type   = "log"
+        x      = 0
+        y      = 18
+        width  = 24
+        height = 8
+        properties = {
+          title  = "訪問者ごと：閲覧数・初回・最終・端末"
+          region = local.dashboard_region
+          view   = "table"
+          query  = "${local.visit_logs} | stats count(*) as views, min(time_jst) as first_visit, max(time_jst) as last_visit, latest(user_agent) as device by ip | sort last_visit desc"
+        }
+      },
+      {
+        type   = "log"
+        x      = 0
+        y      = 26
+        width  = 24
+        height = 8
+        properties = {
+          title  = "アクセス明細"
+          region = local.dashboard_region
+          view   = "table"
+          query  = "${local.visit_logs} | fields time_jst, ip, page, user_agent | sort @timestamp desc | limit 200"
         }
       },
     ]
