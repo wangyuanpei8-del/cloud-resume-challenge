@@ -160,7 +160,7 @@ resource "aws_cloudwatch_dashboard" "site" {
           title  = "訪問者ごと：閲覧数・初回・最終・端末"
           region = local.dashboard_region
           view   = "table"
-          query  = "${local.visit_logs} | stats count(*) as views, min(time_jst) as first_visit, max(time_jst) as last_visit, latest(user_agent) as device by ip | sort last_visit desc"
+          query  = "${local.visit_logs} | stats count(*) as views, earliest(time_jst) as first_visit, latest(time_jst) as last_visit, latest(user_agent) as device by ip | sort last_visit desc"
         }
       },
       {
