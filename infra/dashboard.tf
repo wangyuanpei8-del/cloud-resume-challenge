@@ -19,6 +19,8 @@ resource "aws_cloudwatch_dashboard" "site" {
   dashboard_name = "resume-site"
 
   dashboard_body = jsonencode({
+    # 開いたときの表示期間（既定の 3 時間だと訪問者の集計がほぼ空になるため 7 日にする）
+    start = "-PT168H"
     widgets = [
       {
         type   = "alarm"
