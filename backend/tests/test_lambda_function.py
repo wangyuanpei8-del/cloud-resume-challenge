@@ -83,3 +83,11 @@ def test_count_is_saved_in_dynamodb(lambda_module):
     call(lambda_module)
     item = boto3.resource("dynamodb").Table(TABLE_NAME).get_item(Key={"id": "visitors"})["Item"]
     assert item["count"] == 2
+
+
+def test_dynamodb_error_is_raised(lambda_module):
+    # DynamoDB に書けないときは例外のまま返す（握りつぶさない）
+    # → Lambda のエラーとして記録され、CloudWatch アラームで検知できる
+    boto3.client("dynamodb").delete_table(TableName=TABLE_NAME)
+    with pytest.raises(lambda_module.table.meta.client.exceptions.ResourceNotFoundException):
+        call(lambda_module)
