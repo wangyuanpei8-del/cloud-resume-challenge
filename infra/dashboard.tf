@@ -146,10 +146,10 @@ resource "aws_cloudwatch_dashboard" "site" {
         width  = 24
         height = 3
         properties = {
-          title  = "訪問者：人数（IP 数）と総閲覧数"
+          title  = "IP 数（人数とは一致しない）と総閲覧数"
           region = local.dashboard_region
           view   = "table"
-          query  = "${local.visit_logs} | stats count_distinct(ip) as visitors, count(*) as views"
+          query  = "${local.visit_logs} | stats count_distinct(ip) as unique_ips, count(*) as views"
         }
       },
       {
@@ -159,7 +159,7 @@ resource "aws_cloudwatch_dashboard" "site" {
         width  = 24
         height = 8
         properties = {
-          title  = "訪問者ごと：閲覧数・初回・最終・端末"
+          title  = "IP ごと：閲覧数・初回・最終・端末"
           region = local.dashboard_region
           view   = "table"
           query  = "${local.visit_logs} | stats count(*) as views, earliest(time_jst) as first_visit, latest(time_jst) as last_visit, latest(user_agent) as device by ip | sort last_visit desc"
