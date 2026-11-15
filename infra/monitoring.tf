@@ -40,3 +40,15 @@ resource "aws_cloudwatch_metric_alarm" "api_5xx" {
   alarm_actions       = [aws_sns_topic.alerts.arn]
   ok_actions          = [aws_sns_topic.alerts.arn]
 }
+
+# Lambda のログ（訪問ログを含む）は 30 日で自動削除する
+# ロググループは Lambda が自動で作ったものを import して管理する
+import {
+  to = aws_cloudwatch_log_group.visitor_counter
+  id = "/aws/lambda/visitor-counter"
+}
+
+resource "aws_cloudwatch_log_group" "visitor_counter" {
+  name              = "/aws/lambda/${aws_lambda_function.visitor_counter.function_name}"
+  retention_in_days = 30
+}

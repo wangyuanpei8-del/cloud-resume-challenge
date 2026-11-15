@@ -16,7 +16,7 @@ resource "aws_lambda_function" "visitor_counter" {
   }
 }
 
-# API Gateway からこの関数を呼び出す許可（GET /count のみ）
+# API Gateway からこの関数を呼び出す許可（/count へのリクエストのみ。ステージとメソッドはワイルドカード）
 resource "aws_lambda_permission" "apigw" {
   statement_id  = "1ed2e9a2-152b-5cac-afad-1ccced082b84" # コンソールが自動で付けた ID をそのまま使用
   action        = "lambda:InvokeFunction"

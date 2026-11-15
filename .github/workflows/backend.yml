@@ -58,3 +58,6 @@ jobs:
 
       - name: Update Lambda function code
         run: aws lambda update-function-code --function-name visitor-counter --zip-file "fileb://$RUNNER_TEMP/visitor-counter.zip"
+
+      - name: Wait for the update to finish
+        run: aws lambda wait function-updated --function-name visitor-counter
